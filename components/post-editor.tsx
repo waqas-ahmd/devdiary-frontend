@@ -140,28 +140,6 @@ const PostEditor = ({ defaultValues }: PostEditorProps) => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Publish Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Publish</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Button type="submit" className="w-full">
-                  Publish Post
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={() =>
-                    form.handleSubmit((values) => onSubmit(values, true))()
-                  }
-                >
-                  Save as Draft
-                </Button>
-              </CardContent>
-            </Card>
-
             {/* Featured Image */}
             <Card>
               <CardHeader>
@@ -242,6 +220,28 @@ const PostEditor = ({ defaultValues }: PostEditorProps) => {
                     </div>
                   )}
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Publish Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Publish</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button type="submit" className="w-full">
+                  Publish Post
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() =>
+                    form.handleSubmit((values) => onSubmit(values, true))()
+                  }
+                >
+                  Save as Draft
+                </Button>
               </CardContent>
             </Card>
           </div>
