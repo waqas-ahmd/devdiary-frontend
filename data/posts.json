@@ -1,0 +1,49 @@
+[
+  {
+    "_id": "1",
+    "title": "Getting Started with Next.js 16: A Complete Guide",
+    "handle": "getting-started-with-nextjs-16",
+    "content": "Discover the powerful new features in Next.js 16 and learn how to build modern React applications with enhanced performance and developer experience.",
+    "featuredImage": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
+    "status": "published",
+    "createdAt": "2025-11-01",
+    "updatedAt": "2025-11-01",
+    "publishedAt": "2025-11-01",
+    "tags": ["Next.js", "React", "Web Development"],
+    "readingTime": 8,
+    "author": {
+      "name": "Jane Doe"
+    }
+  },
+  {
+    "_id": "2",
+    "title": "Advanced TypeScript Patterns You Should Know",
+    "handle": "advanced-typescript-patterns-you-should-know",
+    "content": "Explore advanced TypeScript patterns, generic constraints, conditional types, and utility types to write more robust and maintainable code.",
+    "featuredImage": "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&q=80",
+    "status": "published",
+    "createdAt": "2025-10-28",
+    "updatedAt": "2025-10-29",
+    "publishedAt": "2025-10-28",
+    "tags": ["TypeScript", "Programming", "Best Practices"],
+    "readingTime": 12,
+    "author": {
+      "name": "John Smith"
+    }
+  },
+  {
+    "_id": "3",
+    "title": "Building Scalable React Applications",
+    "handle": "building-scalable-react-applications",
+    "content": "Learn proven strategies for building scalable React applications with modern architecture patterns and performance optimization techniques.",
+    "featuredImage": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80",
+    "status": "draft",
+    "createdAt": "2025-11-05",
+    "updatedAt": "2025-11-06",
+    "tags": ["React", "Architecture", "Performance"],
+    "readingTime": 15,
+    "author": {
+      "name": "Alice Johnson"
+    }
+  }
+]

@@ -22,56 +22,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Header from "@/components/header";
-
-// Example TypeScript types
-type Post = {
-  id: string;
-  title: string;
-  content: string;
-  author: { name: string };
-  date: string;
-  tags: string[];
-  cover?: string;
-  readingTime: number;
-};
-
-const MOCK_POSTS: Post[] = [
-  {
-    id: "1",
-    title: "How to structure scalable React apps",
-    content:
-      "Patterns and folder structure that make your React apps maintainable and scalable.",
-    author: { name: "Ali Khan" },
-    date: "2025-10-08",
-    tags: ["react", "architecture"],
-    cover:
-      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80",
-    readingTime: 6,
-  },
-  {
-    id: "2",
-    title: "A practical guide to Tailwind + shadcn",
-    content: "Using shadcn components with Tailwind for faster UI development.",
-    author: { name: "Sara Malik" },
-    date: "2025-09-20",
-    tags: ["tailwind", "ui"],
-    cover:
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80",
-    readingTime: 8,
-  },
-  {
-    id: "3",
-    title: "Intro to Serverless with AWS & Node.js",
-    content:
-      "Deploy small REST APIs without managing servers using Lambdas and API Gateway.",
-    author: { name: "Waqas Ahmad" },
-    date: "2025-08-03",
-    tags: ["aws", "serverless"],
-    cover:
-      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&q=80",
-    readingTime: 10,
-  },
-];
+import MOCK_POSTS from "@/data/posts.json";
 
 export default function BlogsListPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -85,7 +36,7 @@ export default function BlogsListPage() {
   }, []);
 
   const filtered = useMemo(() => {
-    let data = [...MOCK_POSTS];
+    let data = [...MOCK_POSTS].filter((p) => p.status === "published");
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -99,8 +50,10 @@ export default function BlogsListPage() {
     if (tagFilter) data = data.filter((p) => p.tags.includes(tagFilter));
 
     data.sort((a, b) => {
-      if (sortBy === "newest") return +new Date(b.date) - +new Date(a.date);
-      if (sortBy === "oldest") return +new Date(a.date) - +new Date(b.date);
+      if (sortBy === "newest")
+        return +new Date(b.publishedAt!) - +new Date(a.publishedAt!);
+      if (sortBy === "oldest")
+        return +new Date(a.publishedAt!) - +new Date(b.publishedAt!);
       if (sortBy === "reading") return a.readingTime - b.readingTime;
       return 0;
     });
@@ -168,20 +121,40 @@ export default function BlogsListPage() {
             </Card>
           ) : (
             filtered.map((post) => (
-              <article key={post.id} className="rounded-lg">
+              <article key={post._id} className="rounded-lg">
                 <Card className="overflow-hidden h-full flex flex-col py-0 gap-2">
-                  {post.cover && (
+                  {post.featuredImage && (
                     <div className="w-full relative">
                       <img
-                        src={post.cover}
+                        src={post.featuredImage}
                         alt={post.title}
                         className="object-cover aspect-video w-full"
                       />
+                      <div className="flex flex-wrap items-center gap-2 pb-2 absolute bottom-0 left-0 w-full px-4">
+                        {post.tags.map((t) => (
+                          <Badge
+                            key={t}
+                            className="uppercase text-[9px] font-bold tracking-wide bg-white/80 text-black"
+                          >
+                            {t}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                   )}
 
                   <CardContent className="flex-1 flex flex-col p-4">
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="mb-1 text-xs text-muted-foreground">
+                      {post.readingTime} min read
+                    </div>
+                    <h3 className="text-lg font-semibold leading-snug mb-2">
+                      {post.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+                      {post.content}
+                    </p>
+
+                    <div className="flex items-center justify-between my-3">
                       <div className="flex items-center gap-3">
                         <Avatar>
                           <AvatarFallback className="font-semibold">
@@ -195,35 +168,12 @@ export default function BlogsListPage() {
                             {post.author.name}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {format(new Date(post.date), "MMM d, yyyy")}
+                            {format(new Date(post.publishedAt!), "MMM d, yyyy")}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        {post.tags.map((t) => (
-                          <Badge
-                            key={t}
-                            className="uppercase text-[10px] tracking-wide"
-                          >
-                            {t}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="mb-1 text-xs text-muted-foreground">
-                      {post.readingTime} min read
-                    </div>
-                    <h3 className="text-lg font-semibold leading-snug mb-2">
-                      {post.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-                      {post.content}
-                    </p>
-
-                    <div className="mt-auto flex items-center justify-between">
-                      <Link href={`/posts/${post.id}`}>
+                      <Link href={`/posts/${post.handle}`}>
                         <Button variant="outline" size="sm">
                           Read more
                         </Button>

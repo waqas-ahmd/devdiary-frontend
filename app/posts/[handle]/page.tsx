@@ -8,30 +8,18 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/header";
-
-const mockPost = {
-  id: "1",
-  title: "How to structure scalable React apps",
-  content:
-    "Patterns and folder structure that make your React apps maintainable and scalable.",
-  author: { name: "Ali Khan" },
-  date: "2025-10-08",
-  tags: ["react", "architecture"],
-  cover:
-    "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80",
-  readingTime: 6,
-};
+import mockPosts from "@/data/posts.json";
 
 interface BlogPostPageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ handle: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
-  const { id } = await params;
-  console.log(id);
-  const post = mockPost;
+  const { handle } = await params;
+  console.log(handle);
+  const post = mockPosts.find((p) => p.handle === handle);
 
   if (!post) {
     return {
@@ -43,15 +31,18 @@ export async function generateMetadata({
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { id } = await params;
-  console.log(id);
-  const post = mockPost;
+  const { handle } = await params;
+  console.log(handle);
+  const post = mockPosts.find((p) => p.handle === handle);
 
   if (!post) {
     notFound();
   }
 
-  const formattedDate = format(post.date, "MMMM d, yyyy");
+  const formattedDate = format(
+    post.publishedAt || post.createdAt,
+    "MMMM d, yyyy"
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -64,7 +55,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               className="flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Blog
+              Back
             </Link>
 
             <div className="flex items-center space-x-4">
