@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 const Header = () => {
   return (
@@ -12,7 +13,9 @@ const Header = () => {
           </p>
         </div>
         <div>
-          <Button size="lg">Create Post</Button>
+          <Link href="/create">
+            <Button size="lg">Create Post</Button>
+          </Link>
         </div>
       </div>
     </header>
