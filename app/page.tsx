@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Header from "@/components/header";
 
 // Example TypeScript types
 type Post = {
@@ -108,23 +109,18 @@ export default function BlogsListPage() {
   }, [searchQuery, tagFilter, sortBy]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold">DevDiary</h1>
-          <p className="text-sm text-muted-foreground">
-            Latest articles, tutorials and case studies.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center w-full md:w-auto">
+    <div>
+      <Header />
+      <div className="container mx-auto px-4 py-6">
+        {/* Filters */}
+        <section className="flex flex-wrap sm:flex-nowrap gap-2 items-center w-full md:w-auto my-6">
           <Input
             placeholder="Search posts..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
             }}
-            className="min-w-[220px]"
+            className="min-w-[220px] max-w-[320px]"
             aria-label="Search posts"
           />
 
@@ -158,11 +154,9 @@ export default function BlogsListPage() {
               <SelectItem value="reading">Reading time</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-      </header>
+        </section>
 
-      <main>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.length === 0 ? (
             <Card className="col-span-full p-8 text-center">
               <CardHeader>
@@ -240,8 +234,8 @@ export default function BlogsListPage() {
               </article>
             ))
           )}
-        </div>
-      </main>
+        </section>
+      </div>
     </div>
   );
 }

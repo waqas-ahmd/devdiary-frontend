@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Header from "@/components/header";
 
 const mockPost = {
   id: "1",
@@ -54,13 +55,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <Header />
+      <nav>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link
               href="/"
-              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Blog
@@ -80,11 +81,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-white border rounded-xl shadow-lg ">
         <article>
           {/* Header */}
           <header className="mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-6 leading-tight">
               {post.title}
             </h1>
 
