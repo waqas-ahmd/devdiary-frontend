@@ -14,3 +14,7 @@ export interface Post {
   tags: string[];
   readingTime: number;
 }
+
+export interface ApiError {
+  message: string;
+}

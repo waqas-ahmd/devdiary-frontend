@@ -24,6 +24,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useAuth } from "@/context/auth-context";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import api from "@/api";
+import { toast } from "sonner";
 
 // Form validation schema
 const signUpSchema = z
@@ -57,6 +62,9 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const { login: handleLogin } = useAuth();
+  const router = useRouter();
+
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -67,8 +75,20 @@ export default function SignUpPage() {
     },
   });
 
+  const register = useMutation({
+    mutationFn: api.user.register,
+    onSuccess: (data) => {
+      handleLogin(data.token);
+      router.push("/");
+      toast.success("Logged in successfully");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
   const onSubmit = async (values: SignUpFormValues) => {
-    console.log("Sign Up Data:", values);
+    register.mutate(values);
   };
 
   return (
