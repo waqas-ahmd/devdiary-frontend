@@ -2,13 +2,15 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Share2, Bookmark } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Share2 } from "lucide-react";
 import { format } from "date-fns";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/header";
 import api from "@/api";
+import DeleteButton from "./delete-button";
+import EditButton from "./edit-button";
 
 interface BlogPostPageProps {
   params: Promise<{ handle: string }>;
@@ -64,14 +66,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               Back
             </Link>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Button variant="outline" size="sm">
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
+                <Share2 className="w-4 h-4" />
+                <span className="hidden sm:block">Share</span>
               </Button>
-              <Button variant="outline" size="sm">
-                <Bookmark className="w-4 h-4" />
-              </Button>
+
+              <DeleteButton post={post} />
+              <EditButton post={post} />
             </div>
           </div>
         </div>

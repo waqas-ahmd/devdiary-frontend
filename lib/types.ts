@@ -5,6 +5,7 @@ export interface Post {
   content: string;
   featuredImage?: string;
   author: {
+    _id: string;
     name: string;
   };
   status: "published" | "draft";

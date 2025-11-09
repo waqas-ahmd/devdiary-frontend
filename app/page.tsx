@@ -30,7 +30,6 @@ export default function BlogsListPage() {
   const allPosts = useQuery({
     queryKey: ["posts"],
     queryFn: api.post.listPublished,
-    refetchOnMount: false,
   });
 
   const allTags = useMemo(() => {

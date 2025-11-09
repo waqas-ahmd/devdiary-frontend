@@ -27,7 +27,6 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuth } from "@/context/auth-context";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 // Form validation schema
@@ -44,7 +43,6 @@ type SignInFormValues = z.infer<typeof signInSchema>;
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const { login: handleLogin } = useAuth();
-  const router = useRouter();
 
   const form = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
@@ -58,7 +56,6 @@ export default function SignInPage() {
     mutationFn: api.user.login,
     onSuccess: (data) => {
       handleLogin(data.token);
-      router.push("/");
       toast.success("Logged in successfully");
     },
     onError: (error: Error) => {

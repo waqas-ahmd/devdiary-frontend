@@ -94,7 +94,8 @@ const PostEditor = ({ defaultValues }: PostEditorProps) => {
               : "successfully"
           }!`
       );
-      router.push(`/edit/${data?.post?._id}`);
+      if (data?.post?.status === "published") router.push("/my-posts");
+      else router.push(`/edit/${data?.post?._id}`);
     },
     onError: toastError,
   });
@@ -108,6 +109,7 @@ const PostEditor = ({ defaultValues }: PostEditorProps) => {
             data?.post?.status === "published" ? "and published" : ""
           }!`
       );
+      if (data?.post?.status === "published") router.push("/my-posts");
     },
     onError: toastError,
   });

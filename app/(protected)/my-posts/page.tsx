@@ -34,7 +34,6 @@ export default function MyPostsPage() {
   const allPosts = useQuery({
     queryKey: ["user-posts"],
     queryFn: api.post.list,
-    refetchOnMount: false,
     retry: false,
   });
 

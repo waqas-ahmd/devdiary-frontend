@@ -25,7 +25,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useAuth } from "@/context/auth-context";
-import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import api from "@/api";
 import { toast } from "sonner";
@@ -63,7 +62,6 @@ export default function SignUpPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { login: handleLogin } = useAuth();
-  const router = useRouter();
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -79,7 +77,6 @@ export default function SignUpPage() {
     mutationFn: api.user.register,
     onSuccess: (data) => {
       handleLogin(data.token);
-      router.push("/");
       toast.success("Logged in successfully");
     },
     onError: (error: Error) => {

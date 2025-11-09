@@ -93,7 +93,6 @@ const UserPostCard = ({ post }: UserPostCardProps) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  //   onClick={() => handleDelete(post._id)}
                   className="text-red-600 hover:text-red-700"
                 >
                   <Trash2Icon className="w-4 h-4" />
