@@ -12,6 +12,7 @@ import React, {
 interface AuthContextType {
   isLoggedIn: boolean;
   user: {
+    _id: string;
     name: string;
     email: string;
   } | null;
@@ -30,9 +31,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (typeof window === "undefined") return false;
     return !!localStorage.getItem(LOCAL_STORAGE_AUTH_TOKEN_KEY);
   });
-  const [user, setUser] = useState<{ name: string; email: string } | null>(
-    null
-  );
+  const [user, setUser] = useState<{
+    _id: string;
+    name: string;
+    email: string;
+  } | null>(null);
 
   const login = (token: string) => {
     localStorage.setItem(LOCAL_STORAGE_AUTH_TOKEN_KEY, token);

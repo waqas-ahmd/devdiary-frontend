@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -10,4 +11,8 @@ export function getInitials(name: string) {
   if (namesArray.length === 0) return "";
   if (namesArray.length === 1) return namesArray[0].slice(0, 2).toUpperCase();
   return namesArray[0][0].toUpperCase() + namesArray[1][0].toUpperCase();
+}
+
+export function toastError(error: Error) {
+  toast.error(error.message);
 }

@@ -25,13 +25,18 @@ import {
 } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
 import { RichTextEditor } from "@/components/richtext-editor";
+import { useMutation } from "@tanstack/react-query";
+import api from "@/api";
+import { toast } from "sonner";
+import { toastError } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const createPostSchema = z.object({
   title: z
     .string()
     .min(5, "Title must be at least 5 characters")
     .max(100, "Title must be less than 100 characters"),
-  image: z
+  featuredImage: z
     .string()
     .url("Please enter a valid image URL")
     .optional()
@@ -42,19 +47,25 @@ const createPostSchema = z.object({
 
 type CreatePostFormValues = z.infer<typeof createPostSchema>;
 
+interface EditPostFormValues extends Partial<CreatePostFormValues> {
+  id: string;
+}
+
 interface PostEditorProps {
-  defaultValues?: Partial<CreatePostFormValues>;
+  defaultValues?: EditPostFormValues;
 }
 
 const PostEditor = ({ defaultValues }: PostEditorProps) => {
   const [tags, setTags] = useState<string[]>(defaultValues?.tags || []);
   const [tagInput, setTagInput] = useState("");
 
+  const router = useRouter();
+
   const form = useForm<CreatePostFormValues>({
     resolver: zodResolver(createPostSchema),
     defaultValues: {
       title: "",
-      image: "",
+      featuredImage: "",
       content: "",
       tags: [],
       ...defaultValues,
@@ -72,7 +83,48 @@ const PostEditor = ({ defaultValues }: PostEditorProps) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
+  const create = useMutation({
+    mutationFn: api.post.create,
+    onSuccess: (data) => {
+      toast.success(
+        data.message ||
+          `Post created ${
+            data?.post?.status === "published"
+              ? "and published"
+              : "successfully"
+          }!`
+      );
+      router.push(`/edit/${data?.post?._id}`);
+    },
+    onError: toastError,
+  });
+
+  const edit = useMutation({
+    mutationFn: api.post.update,
+    onSuccess: (data) => {
+      toast.success(
+        data.message ||
+          `Post updated ${
+            data?.post?.status === "published" ? "and published" : ""
+          }!`
+      );
+    },
+    onError: toastError,
+  });
+
   const onSubmit = async (values: CreatePostFormValues, isDraft = false) => {
+    if (defaultValues?.id === undefined) {
+      create.mutate({
+        ...values,
+        status: isDraft ? "draft" : "published",
+      });
+    } else {
+      edit.mutate({
+        id: defaultValues.id,
+        ...values,
+        status: isDraft ? "draft" : "published",
+      });
+    }
     console.log("Form Values:", isDraft, values);
   };
 
@@ -151,7 +203,7 @@ const PostEditor = ({ defaultValues }: PostEditorProps) => {
               <CardContent>
                 <FormField
                   control={form.control}
-                  name="image"
+                  name="featuredImage"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -167,15 +219,16 @@ const PostEditor = ({ defaultValues }: PostEditorProps) => {
                     </FormItem>
                   )}
                 />
-                {form.watch("image") && form.watch("image")!.trim() && (
-                  <div className="mt-4 w-full">
-                    <img
-                      src={form.watch("image")!}
-                      alt="Featured"
-                      className="object-cover rounded-lg w-full aspect-video"
-                    />
-                  </div>
-                )}
+                {form.watch("featuredImage") &&
+                  form.watch("featuredImage")!.trim() && (
+                    <div className="mt-4 w-full">
+                      <img
+                        src={form.watch("featuredImage")!}
+                        alt="Featured"
+                        className="object-cover rounded-lg w-full aspect-video"
+                      />
+                    </div>
+                  )}
               </CardContent>
             </Card>
 
@@ -229,7 +282,11 @@ const PostEditor = ({ defaultValues }: PostEditorProps) => {
                 <CardTitle>Publish</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button type="submit" className="w-full">
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={create.isPending || edit.isPending}
+                >
                   Publish Post
                 </Button>
                 <Button
@@ -239,6 +296,7 @@ const PostEditor = ({ defaultValues }: PostEditorProps) => {
                   onClick={() =>
                     form.handleSubmit((values) => onSubmit(values, true))()
                   }
+                  disabled={create.isPending || edit.isPending}
                 >
                   Save as Draft
                 </Button>

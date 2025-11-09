@@ -1,21 +1,15 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { format } from "date-fns";
 import {
   Search,
   Filter,
   Plus,
-  Edit,
-  Eye,
-  Trash2,
-  Calendar,
-  Clock,
-  TrendingUp,
   FileText,
-  Archive,
+  CircleAlert,
+  RefreshCwIcon,
+  LoaderCircleIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,30 +21,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import Header from "@/components/header";
-import mockPosts from "@/data/posts.json";
-import { Post } from "@/lib/types";
-
-const statusColors = {
-  published: "bg-green-100 text-green-800 border-green-200",
-  draft: "bg-yellow-100 text-yellow-800 border-yellow-200",
-};
-
-const statusIcons = {
-  published: TrendingUp,
-  draft: FileText,
-  archived: Archive,
-};
+import { useQuery } from "@tanstack/react-query";
+import UserPostCard from "@/components/user-post-card";
+import api from "@/api";
 
 export default function MyPostsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState("newest");
 
+  const allPosts = useQuery({
+    queryKey: ["user-posts"],
+    queryFn: api.post.list,
+    refetchOnMount: false,
+    retry: false,
+  });
+
   // Filter and sort posts
   const filteredPosts = useMemo(() => {
-    let filtered = [...mockPosts];
+    let filtered = [...(allPosts.data?.posts || [])];
 
     // Search filter
     if (searchQuery.trim()) {
@@ -58,7 +48,7 @@ export default function MyPostsPage() {
       filtered = filtered.filter(
         (post) =>
           post.title.toLowerCase().includes(query) ||
-          post.tags.some((tag) => tag.toLowerCase().includes(query))
+          post.tags.some((tag: string) => tag.toLowerCase().includes(query))
       );
     }
 
@@ -90,28 +80,7 @@ export default function MyPostsPage() {
     });
 
     return filtered;
-  }, [searchQuery, statusFilter, sortBy]);
-
-  // Stats calculations
-  const stats = useMemo(() => {
-    const published = mockPosts.filter((p) => p.status === "published");
-    const drafts = mockPosts.filter((p) => p.status === "draft");
-
-    return {
-      totalPosts: mockPosts.length,
-      published: published.length,
-      drafts: drafts.length,
-    };
-  }, []);
-
-  const handleDelete = async (postId: string) => {
-    console.log("deleting...", postId);
-  };
-
-  const getStatusIcon = (status: Post["status"]) => {
-    const Icon = statusIcons[status];
-    return <Icon className="w-4 h-4" />;
-  };
+  }, [searchQuery, statusFilter, sortBy, allPosts.data]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -120,54 +89,6 @@ export default function MyPostsPage() {
         <div className="container mx-auto px-4 py-8">
           <div>
             <h1 className="text-3xl font-bold">My Posts</h1>
-          </div>
-          {/* Stats Cards */}
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center">
-                  <FileText className="w-8 h-8 text-blue-600" />
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Posts
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {stats.totalPosts}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center">
-                  <TrendingUp className="w-8 h-8 text-green-600" />
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-600">
-                      Published
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {stats.published}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center">
-                  <Edit className="w-8 h-8 text-yellow-600" />
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-600">Drafts</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {stats.drafts}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </section>
@@ -215,111 +136,53 @@ export default function MyPostsPage() {
 
         {/* Posts Grid */}
         {filteredPosts.length === 0 ? (
-          <Card className="text-center py-12">
-            <CardContent>
-              <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No posts found
-              </h3>
-              <p className="text-gray-600 mb-6">
-                {searchQuery || statusFilter !== "all"
-                  ? "Try adjusting your search or filters"
-                  : "You haven't created any posts yet"}
-              </p>
-              {!searchQuery && statusFilter === "all" && (
-                <Link href="/create">
-                  <Button>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Your First Post
-                  </Button>
-                </Link>
-              )}
-            </CardContent>
+          <Card className="text-center h-80 items-center justify-center flex">
+            {allPosts.isPending ? (
+              <CardContent>
+                <div className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <LoaderCircleIcon className="animate-spin" /> Loading posts...
+                </div>
+              </CardContent>
+            ) : allPosts.isError ? (
+              <CardContent>
+                <CircleAlert className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Error loading posts
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Try refreshing the page or come back later.
+                </p>
+                <Button onClick={() => allPosts.refetch()}>
+                  <RefreshCwIcon className="w-4 h-4 mr-2" />
+                  Refresh
+                </Button>
+              </CardContent>
+            ) : (
+              <CardContent>
+                <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  No posts found
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  {searchQuery || statusFilter !== "all"
+                    ? "Try adjusting your search or filters"
+                    : "You haven't created any posts yet"}
+                </p>
+                {!searchQuery && statusFilter === "all" && (
+                  <Link href="/create">
+                    <Button>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create Your First Post
+                    </Button>
+                  </Link>
+                )}
+              </CardContent>
+            )}
           </Card>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredPosts.map((post) => (
-              <Card
-                key={post._id}
-                className="overflow-hidden hover:shadow-lg transition-shadow py-0 gap-0"
-              >
-                {/* Featured Image */}
-                {post.featuredImage && (
-                  <div className="relative w-full">
-                    <img
-                      src={post.featuredImage}
-                      alt={post.title}
-                      className="object-cover w-full aspect-video"
-                    />
-                  </div>
-                )}
-
-                <CardContent className="p-6">
-                  {/* Status and Actions */}
-                  <div className="flex items-center justify-between mb-3">
-                    <Badge
-                      className={statusColors[post.status as Post["status"]]}
-                    >
-                      {getStatusIcon(post.status as Post["status"])}
-                      <span className="ml-1 capitalize">{post.status}</span>
-                    </Badge>
-
-                    <div className="flex items-center space-x-2">
-                      <Link href={`/posts/${post.handle}`} target="_blank">
-                        <Button variant="ghost" size="sm">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                      </Link>
-                      <Link href={`/edit/${post._id}`} target="_blank">
-                        <Button variant="ghost" size="sm">
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(post._id)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Title and Excerpt */}
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                    {post.title}
-                  </h3>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {post.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                    {post.tags.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{post.tags.length - 3}
-                      </Badge>
-                    )}
-                  </div>
-
-                  {/* Meta Info */}
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center">
-                        <Calendar className="w-3 h-3 mr-1" />
-                        {format(post.createdAt, "MMM d, yyyy")}
-                      </div>
-                      <div className="flex items-center">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {post.readingTime} min
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <UserPostCard key={post._id} post={post} />
             ))}
           </div>
         )}

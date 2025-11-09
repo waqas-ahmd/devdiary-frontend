@@ -1,37 +1,23 @@
+"use client";
+import api from "@/api";
 import Header from "@/components/header";
 import PostEditor from "@/components/post-editor";
-import { Metadata } from "next";
-import mockPosts from "@/data/posts.json";
-import { notFound } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { FileText, LoaderCircleIcon } from "lucide-react";
+import { useParams } from "next/navigation";
 
-interface BlogPostPageProps {
-  params: Promise<{ id: string }>;
-}
+export default function CreatePostPage() {
+  const params = useParams();
+  const id = (params.id || "") as string;
+  const post = useQuery({
+    queryKey: ["post", id],
+    queryFn: () => api.post.get(id),
+    enabled: !!id,
+    retry: false,
+    refetchOnMount: false,
+  });
 
-export async function generateMetadata({
-  params,
-}: BlogPostPageProps): Promise<Metadata> {
-  const { id } = await params;
-  console.log(id);
-  const post = mockPosts.find((p) => p._id === id);
-
-  if (!post) {
-    return {
-      title: "Post Not Found",
-    };
-  }
-
-  return post;
-}
-
-export default async function CreatePostPage({ params }: BlogPostPageProps) {
-  const { id } = await params;
-  console.log(id);
-  const post = mockPosts.find((p) => p._id === id);
-
-  if (!post) {
-    notFound();
-  }
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -44,14 +30,34 @@ export default async function CreatePostPage({ params }: BlogPostPageProps) {
           </p>
         </div>
 
-        <PostEditor
-          defaultValues={{
-            title: post.title,
-            image: post.featuredImage,
-            content: post.content,
-            tags: post.tags,
-          }}
-        />
+        {post.isError ? (
+          <Card className="text-center h-80 items-center justify-center flex w-full col-span-3">
+            <CardContent>
+              <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Post not found
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Make sure the post ID is correct or try again later.
+              </p>
+            </CardContent>
+          </Card>
+        ) : post.isPending ? (
+          <Card className="text-center h-80 items-center justify-center flex w-full col-span-3">
+            <CardContent>
+              <div className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                <LoaderCircleIcon className="animate-spin" /> Loading...
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <PostEditor
+            defaultValues={{
+              id,
+              ...post?.data?.post,
+            }}
+          />
+        )}
       </main>
     </div>
   );

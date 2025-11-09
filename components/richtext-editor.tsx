@@ -40,8 +40,7 @@ export const RichTextEditor = ({
     },
     editorProps: {
       attributes: {
-        class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[300px] p-4 [&_h1]:text-3xl [&_h2]:text-2xl [&_h3]:text-xl [&_img]:my-4 [&_img]:max-w-[320px] [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:ml-4 [&_ol]:list-decimal",
+        class: "prose mx-auto focus:outline-none min-h-[300px] p-4",
       },
     },
     immediatelyRender: false,
@@ -176,7 +175,7 @@ export const RichTextEditor = ({
       {/* Editor Content */}
       <EditorContent
         editor={editor}
-        className="min-h-[300px] prose max-w-none"
+        className="min-h-[300px] max-h-[400px] overflow-auto prose max-w-none"
         placeholder={placeholder}
       />
     </div>

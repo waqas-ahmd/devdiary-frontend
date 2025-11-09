@@ -7,6 +7,7 @@ const apiClient = axios.create({
 });
 
 const getAuthToken = () => {
+  if (typeof window === "undefined") return null;
   return localStorage.getItem(LOCAL_STORAGE_AUTH_TOKEN_KEY);
 };
 

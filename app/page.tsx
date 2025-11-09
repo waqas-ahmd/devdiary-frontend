@@ -1,16 +1,6 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 import React, { useMemo, useState } from "react";
-import { format } from "date-fns";
-import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -19,24 +9,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Header from "@/components/header";
-import MOCK_POSTS from "@/data/posts.json";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/api";
+import { Post } from "@/lib/types";
+import PostCard from "@/components/post-card";
+import {
+  CircleAlert,
+  FileText,
+  LoaderCircleIcon,
+  RefreshCwIcon,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function BlogsListPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [tagFilter, setTagFilter] = useState<string | undefined>(undefined);
   const [sortBy, setSortBy] = useState("newest");
 
+  const allPosts = useQuery({
+    queryKey: ["posts"],
+    queryFn: api.post.listPublished,
+    refetchOnMount: false,
+  });
+
   const allTags = useMemo(() => {
     const s = new Set<string>();
-    MOCK_POSTS.forEach((p) => p.tags.forEach((t) => s.add(t)));
+    allPosts.data?.posts.forEach((p: Post) => p.tags.forEach((t) => s.add(t)));
     return Array.from(s).sort();
-  }, []);
+  }, [allPosts.data]);
 
   const filtered = useMemo(() => {
-    let data = [...MOCK_POSTS].filter((p) => p.status === "published");
+    let data = [...(allPosts.data?.posts || [])].filter(
+      (p) => p.status === "published"
+    );
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -59,7 +65,7 @@ export default function BlogsListPage() {
     });
 
     return data;
-  }, [searchQuery, tagFilter, sortBy]);
+  }, [searchQuery, tagFilter, sortBy, allPosts.data]);
 
   return (
     <div>
@@ -111,78 +117,44 @@ export default function BlogsListPage() {
 
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.length === 0 ? (
-            <Card className="col-span-full p-8 text-center">
-              <CardHeader>
-                <CardTitle>No results</CardTitle>
-                <CardDescription>
-                  Try different keywords or clear filters.
-                </CardDescription>
-              </CardHeader>
+            <Card className="text-center h-80 items-center justify-center flex w-full col-span-3">
+              {allPosts.isPending ? (
+                <CardContent>
+                  <div className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                    <LoaderCircleIcon className="animate-spin" /> Loading
+                    posts...
+                  </div>
+                </CardContent>
+              ) : allPosts.isError ? (
+                <CardContent>
+                  <CircleAlert className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Error loading posts
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Try refreshing the page or come back later.
+                  </p>
+                  <Button onClick={() => allPosts.refetch()}>
+                    <RefreshCwIcon className="w-4 h-4 mr-2" />
+                    Refresh
+                  </Button>
+                </CardContent>
+              ) : (
+                <CardContent>
+                  <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    No posts found
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    {searchQuery
+                      ? "Try adjusting your search or filters"
+                      : "No posts available yet."}
+                  </p>
+                </CardContent>
+              )}
             </Card>
           ) : (
-            filtered.map((post) => (
-              <article key={post._id} className="rounded-lg">
-                <Card className="overflow-hidden h-full flex flex-col py-0 gap-2">
-                  {post.featuredImage && (
-                    <div className="w-full relative">
-                      <img
-                        src={post.featuredImage}
-                        alt={post.title}
-                        className="object-cover aspect-video w-full"
-                      />
-                      <div className="flex flex-wrap items-center gap-2 pb-2 absolute bottom-0 left-0 w-full px-4">
-                        {post.tags.map((t) => (
-                          <Badge
-                            key={t}
-                            className="uppercase text-[9px] font-bold tracking-wide bg-white/80 text-black"
-                          >
-                            {t}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <CardContent className="flex-1 flex flex-col p-4">
-                    <div className="mb-1 text-xs text-muted-foreground">
-                      {post.readingTime} min read
-                    </div>
-                    <h3 className="text-lg font-semibold leading-snug mb-2">
-                      {post.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-                      {post.content}
-                    </p>
-
-                    <div className="flex items-center justify-between my-3">
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarFallback className="font-semibold">
-                            {post.author.name.split(" ")[0][0]}
-                            {post.author.name.split(" ")[1][0]}
-                          </AvatarFallback>
-                        </Avatar>
-
-                        <div>
-                          <p className="text-sm font-medium">
-                            {post.author.name}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {format(new Date(post.publishedAt!), "MMM d, yyyy")}
-                          </p>
-                        </div>
-                      </div>
-
-                      <Link href={`/posts/${post.handle}`}>
-                        <Button variant="outline" size="sm">
-                          Read more
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              </article>
-            ))
+            filtered.map((post) => <PostCard key={post._id} post={post} />)
           )}
         </section>
       </div>

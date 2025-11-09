@@ -1,14 +1,14 @@
+/* eslint-disable @next/next/no-img-element */
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, Share2, Bookmark } from "lucide-react";
 import { format } from "date-fns";
-
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/header";
-import mockPosts from "@/data/posts.json";
+import api from "@/api";
 
 interface BlogPostPageProps {
   params: Promise<{ handle: string }>;
@@ -18,23 +18,29 @@ export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
   const { handle } = await params;
-  console.log(handle);
-  const post = mockPosts.find((p) => p.handle === handle);
+  const data = await api.post.getByHandle(handle);
 
-  if (!post) {
-    return {
-      title: "Post Not Found",
-    };
-  }
+  if (!data.post) return { title: "Post Not Found" };
 
-  return post;
+  return {
+    title: data.post.title,
+    description: data.post.content.replace(/<\/?[^>]+(>|$)/g, "").slice(0, 160),
+  };
 }
+
+const getPost = async (handle: string) => {
+  try {
+    const data = await api.post.getByHandle(handle);
+    return data.post;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { handle } = await params;
-  console.log(handle);
-  const post = mockPosts.find((p) => p.handle === handle);
-
+  const post = await getPost(handle);
   if (!post) {
     notFound();
   }
@@ -72,7 +78,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-white border rounded-xl shadow-lg ">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-10 bg-white border rounded-xl shadow-lg ">
         <article>
           {/* Header */}
           <header className="mb-8">
@@ -87,7 +93,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   <AvatarFallback>
                     {post.author.name
                       .split(" ")
-                      .map((n) => n[0])
+                      .map((n: string) => n[0])
                       .join("")}
                   </AvatarFallback>
                 </Avatar>
@@ -110,9 +116,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </div>
             </div>
 
+            {post.featuredImage && (
+              <div className="w-full">
+                <img
+                  src={post.featuredImage}
+                  alt={post.title}
+                  className="object-cover w-full h-64"
+                />
+              </div>
+            )}
+
             {/* Tags */}
             <div className="flex flex-wrap gap-2 mt-6">
-              {post.tags.map((tag) => (
+              {post.tags.map((tag: string) => (
                 <Badge key={tag} variant="outline">
                   {tag}
                 </Badge>

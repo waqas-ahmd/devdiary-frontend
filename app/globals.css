@@ -121,3 +121,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.prose {
+  @apply [&_p]:mb-3 [&_h1,h2,h3]:mb-3 [&_h1]:text-3xl [&_h2]:text-2xl [&_h3]:text-xl [&_img]:my-4 [&_img]:max-w-[320px] [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:ml-4 [&_ol]:list-decimal;
+}

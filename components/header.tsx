@@ -10,12 +10,13 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { getInitials } from "@/lib/utils";
+import { PenIcon } from "lucide-react";
 
 const Header = () => {
   const { isLoggedIn, logout, user } = useAuth();
 
   return (
-    <header className="flex flex-col gap-4 bg-white border-b py-2">
+    <header className="flex flex-col gap-4 bg-white border-b py-2 sticky top-0 z-50 shadow-sm">
       <div className="flex flex-row gap-2 justify-between items-center container mx-auto px-4">
         <Link href="/" className="flex flex-col">
           <h1 className="text-3xl font-bold font-mono-2">{`{DevDiary}`}</h1>
@@ -25,7 +26,10 @@ const Header = () => {
         </Link>
         <div className="flex flex-row gap-2">
           <Link href={isLoggedIn ? "/create" : "/register"}>
-            <Button size="lg">Create Post</Button>
+            <Button size="lg">
+              <PenIcon className="" />
+              <span className="hidden sm:block">Write Post</span>
+            </Button>
           </Link>
           {isLoggedIn && (
             <DropdownMenu>
