@@ -1,5 +1,6 @@
 "use client";
 import { useAuth } from "@/context/auth-context";
+import { LoaderCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -9,7 +10,7 @@ interface AuthRouteHandlerProps {
 }
 
 const AuthRouteHandler = ({ type, children }: AuthRouteHandlerProps) => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -22,6 +23,14 @@ const AuthRouteHandler = ({ type, children }: AuthRouteHandlerProps) => {
       return;
     }
   }, [isLoggedIn, router, type]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <LoaderCircleIcon className="animate-spin size-10" />
+      </div>
+    );
+  }
   return <>{children}</>;
 };
 

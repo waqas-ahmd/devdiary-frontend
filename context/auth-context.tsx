@@ -11,6 +11,7 @@ import React, {
 
 interface AuthContextType {
   isLoggedIn: boolean;
+  loading: boolean;
   user: {
     _id: string;
     name: string;
@@ -27,15 +28,14 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return !!localStorage.getItem(LOCAL_STORAGE_AUTH_TOKEN_KEY);
-  });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<{
     _id: string;
     name: string;
     email: string;
   } | null>(null);
+
+  const [loading, setLoading] = useState(true);
 
   const login = (token: string) => {
     localStorage.setItem(LOCAL_STORAGE_AUTH_TOKEN_KEY, token);
@@ -59,8 +59,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       .catch(logout);
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const token = localStorage.getItem(LOCAL_STORAGE_AUTH_TOKEN_KEY);
+    const updateLoginState = () => {
+      setIsLoggedIn(!!token);
+      setTimeout(() => setLoading(false), 200); // Simulate loading delay
+    };
+    updateLoginState();
+  }, []);
+
   const value: AuthContextType = {
     user,
+    loading,
     isLoggedIn,
     login,
     logout,
