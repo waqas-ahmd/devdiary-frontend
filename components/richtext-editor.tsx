@@ -58,7 +58,7 @@ export const RichTextEditor = ({
   }
 
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="border rounded-lg overflow-hidden bg-white shadow-sm">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-1 p-3 border-b bg-gray-50">
         <Button

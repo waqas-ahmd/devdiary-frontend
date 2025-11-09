@@ -11,7 +11,7 @@ export default function CreatePostPage() {
   const params = useParams();
   const id = (params.id || "") as string;
   const post = useQuery({
-    queryKey: ["post", id],
+    queryKey: ["edit-post", id],
     queryFn: () => api.post.get(id),
     enabled: !!id,
     retry: false,
@@ -51,12 +51,14 @@ export default function CreatePostPage() {
             </CardContent>
           </Card>
         ) : (
-          <PostEditor
-            defaultValues={{
-              id,
-              ...post?.data?.post,
-            }}
-          />
+          <>
+            <PostEditor
+              defaultValues={{
+                id,
+                ...post?.data?.post,
+              }}
+            />
+          </>
         )}
       </main>
     </div>
