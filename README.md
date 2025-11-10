@@ -1,36 +1,172 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📝 DevDiary - Modern Blog Application
 
-## Getting Started
+A full-featured blog application built with Next.js 16, TypeScript, and modern web technologies. DevDiary provides a complete blogging platform with rich text editing, user authentication, and content management capabilities.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 🏠 **Public Features**
+
+- **Blog Listing**: Responsive grid layout with search and filtering
+- **Individual Blog Posts**: Rich content display with author information
+- **Post Navigation**: Easy navigation between posts and back to listing
+- **Responsive Design**: Mobile-first approach with tablet and desktop optimization
+
+### 🔐 **Authentication**
+
+- **User Registration**: Secure sign-up with comprehensive validation
+- **Form Validation**: Advanced password requirements and email validation
+- **Visual Feedback**: Loading states and error handling
+
+### ✍️ **Content Creation**
+
+- **Rich Text Editor**: TipTap-powered WYSIWYG editor with:
+  - Text formatting (Bold, Italic)
+  - Headings (H1, H2, H3)
+  - Lists (Bullet and Numbered)
+  - Blockquotes
+  - Image insertion
+  - Undo/Redo functionality
+- **Post Management**: Title, featured image, and tags
+- **Draft System**: Save posts as drafts before publishing
+- **Tag Management**: Dynamic tag addition and removal
+
+### 📊 **Content Management**
+
+- **My Posts Dashboard**: Personal post management interface
+- **Post Statistics**: Views, likes, comments tracking
+- **Status Management**: Published, Draft, and Archived states
+- **Advanced Filtering**: Search by title, content, tags, and status
+- **Sorting Options**: Multiple sorting criteria (date, popularity, alphabetical)
+- **Quick Actions**: Edit, view, and delete posts
+
+## 🛠️ Technology Stack
+
+### **Frontend Framework**
+
+- **Next.js 16**: Latest React framework with App Router
+- **TypeScript**: Type-safe development
+- **React 19**: Latest React version with improved performance
+
+### **UI & Styling**
+
+- **Tailwind CSS 4**: Utility-first CSS framework
+- **Shadcn/ui**: Modern component library built on Radix UI
+- **Radix UI**: Accessible, unstyled UI primitives
+- **Lucide React**: Beautiful, customizable icons
+
+### **Form Handling & Validation**
+
+- **React Hook Form**: Performant forms with minimal re-renders
+- **Zod**: TypeScript-first schema validation
+- **@hookform/resolvers**: Seamless integration between RHF and Zod
+
+### **State Management & Data Fetching**
+
+- **React Query (TanStack Query)**: Data fetching and caching
+- **Axios**: Promise-based HTTP client
+- **Context API**: Lightweight state management for authentication
+
+### **Rich Text Editing**
+
+- **TipTap**: Headless, framework-agnostic rich text editor
+- **TipTap Starter Kit**: Essential editing extensions
+- **TipTap Image Extension**: Image insertion capabilities
+
+### **Utilities**
+
+- **date-fns**: Modern JavaScript date utility library
+- **clsx & tailwind-merge**: Conditional class name utilities
+- **Class Variance Authority**: Type-safe variant styling
+
+## 📁 Project Structure
+
+```
+app/
+├── (auth)/
+│   └── register/           # User registration page
+├── (protected)/
+│   ├── create/            # Blog post creation
+│   └── my-posts/          # User's post management
+├── posts/
+│   └── [id]/              # Individual blog post pages
+├── globals.css            # Global styles
+├── layout.tsx             # Root layout
+└── page.tsx               # Blog listing homepage
+
+components/
+└── ui/                    # Reusable UI components
+    ├── avatar.tsx
+    ├── badge.tsx
+    ├── button.tsx
+    ├── card.tsx
+    ├── form.tsx
+    ├── input.tsx
+    ├── label.tsx
+    └── select.tsx
+
+lib/
+└── utils.ts              # Utility functions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Prerequisites
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Node.js 18+ and npm/yarn
+- Modern web browser
 
-## Learn More
+### Installation
 
-To learn more about Next.js, take a look at the following resources:
+1. **Clone the repository**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   git clone <repository-url>
+   cd frontend
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Install dependencies**
 
-## Deploy on Vercel
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Start the development server**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+4. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+### Build for Production
+
+```bash
+npm run build
+npm start
+```
+
+## 📋 Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
+
+### **Components**
+
+- Consistent spacing using Tailwind's spacing scale
+- Rounded corners and subtle shadows
+- Smooth transitions and hover effects
+
+### **Form Validation**
+
+Comprehensive validation using Zod schemas:
+
+- **Registration**: Name, email, password strength, confirmation matching
+- **Post Creation**: Title length, content requirements, URL validation
+- **Real-time Feedback**: Immediate error display and field validation
