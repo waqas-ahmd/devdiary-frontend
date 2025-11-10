@@ -23,7 +23,7 @@ const PostCard = ({ post }: PostCardProps) => {
             className="object-cover aspect-video w-full"
           />
           <div className="flex flex-wrap items-center gap-2 pb-2 absolute bottom-0 left-0 w-full px-4">
-            {post.tags.map((t: string) => (
+            {post.tags.slice(0, 3).map((t: string) => (
               <Badge
                 key={t}
                 className="uppercase text-[9px] font-bold tracking-wide bg-white/80 text-black"
