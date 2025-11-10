@@ -130,13 +130,13 @@ lib/
    Add your environment variable:
 
    ```env
-   NEXT_PUBLIC_API_URL=https://api.devdiary.ranjha.dev
+   NEXT_PUBLIC_API_URL=https://api.devdiary.ranjha.dev/api
    ```
 
    For local backend development:
 
    ```env
-   NEXT_PUBLIC_API_URL=http://localhost:8000
+   NEXT_PUBLIC_API_URL=http://localhost:8000/api
    ```
 
    Find Backend repository here: [DevDiary Backend](https://github.com/waqas-ahmd/devdiary-backend)
