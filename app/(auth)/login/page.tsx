@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowLeft, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -157,7 +157,14 @@ export default function SignInPage() {
                 />
 
                 {/* Submit Button */}
-                <Button type="submit" className="w-full">
+                <Button
+                  disabled={login.isPending}
+                  type="submit"
+                  className="w-full"
+                >
+                  {login.isPending ? (
+                    <LoaderCircle className="size-4 animate-spin" />
+                  ) : null}
                   Sign In
                 </Button>
               </form>

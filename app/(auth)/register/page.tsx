@@ -5,7 +5,15 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, User, Mail, Lock, ArrowLeft } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  User,
+  Mail,
+  Lock,
+  ArrowLeft,
+  LoaderCircle,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -239,8 +247,15 @@ export default function SignUpPage() {
                 />
 
                 {/* Submit Button */}
-                <Button type="submit" className="w-full">
-                  Create Account
+                <Button
+                  disabled={register.isPending}
+                  type="submit"
+                  className="w-full"
+                >
+                  {register.isPending ? (
+                    <LoaderCircle className="size-4 animate-spin" />
+                  ) : null}
+                  Sign up
                 </Button>
               </form>
             </Form>
