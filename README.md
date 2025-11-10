@@ -124,7 +124,24 @@ lib/
    cd frontend
    ```
 
-2. **Install dependencies**
+2. **Configure environment variables**
+
+   Create a `.env` file in the root directory and add necessary environment variables.
+   Add your environment variable:
+
+   ```env
+   NEXT_PUBLIC_API_URL=https://api.devdiary.ranjha.dev
+   ```
+
+   For local backend development:
+
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   ```
+
+   Find Backend repository here: [DevDiary Backend](https://github.com/waqas-ahmd/devdiary-backend)
+
+3. **Install dependencies**
 
    ```bash
    npm install
@@ -132,7 +149,7 @@ lib/
    yarn install
    ```
 
-3. **Start the development server**
+4. **Start the development server**
 
    ```bash
    npm run dev
@@ -140,7 +157,7 @@ lib/
    yarn dev
    ```
 
-4. **Open your browser**
+5. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ### Build for Production
